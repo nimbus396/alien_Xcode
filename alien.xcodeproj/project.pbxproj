@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		A1B679D3218BC04B004672B5 /* alien */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = alien; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B679D6218BC04B004672B5 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A1B679DD218BC119004672B5 /* gameboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gameboard.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				A1B679D6218BC04B004672B5 /* main.cpp */,
+				A1B679DD218BC119004672B5 /* gameboard.h */,
 			);
 			path = alien;
 			sourceTree = "<group>";
@@ -238,6 +240,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEBUGME = 1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -246,6 +249,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEBUGME = 1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
