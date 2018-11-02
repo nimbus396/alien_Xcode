@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <ncurses.h>
+#include <future>
 using namespace std;
 
 /*
@@ -18,6 +19,7 @@ int BASEX; // Shooter position
 int DEBUGME; // Debug information
 const int SPEED = 25000000; // Speed of the game
 const int MISSILE_LIMIT=3; // Set missile limit
+bool RUNNING=true;
 
 /*
  * Create the canvas
@@ -81,7 +83,29 @@ void loadAliens() {
  * Routine to make the everything move and check collisions
  */
 void refreshGameBoard(void) {
+    /*
+     * This isn't a "graphic" game and simply uses
+     * standard american ascii charaters for the images.
+     * NCurses library is used but, we have some setup to do.
+     */
+    initscr(); // Initialize Curses
+    cbreak(); // Use unbuffered input
+    keypad(stdscr, TRUE); // Allow for use of keypad
+    nodelay(stdscr, TRUE); // Immediately process input so player doesn't press enter
+    curs_set(0); // Turn the cursor off.
+    noecho(); // Don't echo keys to the screen
+    refresh(); // Apply our setup
     
+    // Create the gameboard
+    CANVAS = newwin(24, 100, 0, 0);
+    
+    // Setup the initial direction and speed of the aliens and the screen borders
+    getmaxyx(CANVAS, MAXY, MAXX);
+    OFFSETX=1;
+    OFFSETY=1;
+    DIRECTION=1;
+
+    while(RUNNING) {
     /*
      * First check the position of the Aliens.  When they hit the
      * screen border, they should drop one level and change direction
@@ -112,8 +136,7 @@ void refreshGameBoard(void) {
         }
     }
     
-    // Draw the "base" so the player has a shooter at the bottom of the screen
-    mvwaddstr(CANVAS, MAXY-1, BASEX, BASE.getImage().c_str());
+    
     
     // Fire the Missle
     for(int i=0; i<MISSILE.size(); i++) {
@@ -160,7 +183,8 @@ void refreshGameBoard(void) {
      * This will be implemented later.  For now, just create a dumb timer.
      */
     for(int i=0; i<SPEED; i++) { int d=0; };
-}
+    }
+    }
 
 /*
  * Setup the canvas and play the game
@@ -170,28 +194,7 @@ void play(void) {
     // What key did the player press?
     int keyPress;
     
-    /*
-     * This isn't a "graphic" game and simply uses
-     * standard american ascii charaters for the images.
-     * NCurses library is used but, we have some setup to do.
-     */
-    initscr(); // Initialize Curses
-    cbreak(); // Use unbuffered input
-    keypad(stdscr, TRUE); // Allow for use of keypad
-    nodelay(stdscr, TRUE); // Immediately process input so player doesn't press enter
-    curs_set(0); // Turn the cursor off.
-    noecho(); // Don't echo keys to the screen
-    refresh(); // Apply our setup
     
-    // Create the gameboard
-    CANVAS = newwin(24, 100, 0, 0);
-    
-    // Setup the initial direction and speed of the aliens and the screen borders
-    getmaxyx(CANVAS, MAXY, MAXX);
-    OFFSETX=1;
-    OFFSETY=1;
-    DIRECTION=1;
-
     
     // Setup the intial position of the shooter
     BASEX = (MAXX/2) - (BASE.getWidth()/2);
@@ -202,16 +205,21 @@ void play(void) {
      */
     MISSILE.clear();
     
+    std::future<void>result(async(refreshGameBoard));
+    
     // Play the game
     while (true) {
         
-        refreshGameBoard();
+        //refreshGameBoard();
         
         // Check for a keypress
         keyPress=getch();
         
         // Do the function associate with the key
-        if(keyPress == 'q' || keyPress == 'Q') break;
+        if(keyPress == 'q' || keyPress == 'Q') {
+            RUNNING=false;
+            break;
+        }
         
         // Enable/Disable Debug information
         if(keyPress == 'd' || keyPress == 'D') {
@@ -232,6 +240,9 @@ void play(void) {
                 MISSILE.push_back(Missile(BASEX, MAXY-3));
             }
         }
+        // Draw the "base" so the player has a shooter at the bottom of the screen
+        mvwaddstr(CANVAS, MAXY-1, BASEX, BASE.getImage().c_str());
+        wrefresh(CANVAS);
     }
     
     // Teardown the game and return the screen to normal
