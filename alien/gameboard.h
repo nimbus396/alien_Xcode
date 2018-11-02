@@ -13,7 +13,7 @@ class moveable_object
     // Stores the image
     string image;
 
-    // Stores the position of the Alien
+    // Stores the position of the object
     int xPos, yPos, size;
 
   public:
@@ -45,6 +45,7 @@ class moveable_object
 };
 
 #endif  // _MOVEABLE_OBJECT_ 
+
 /*
  * Derive an alien from the generic moveable object class.
  * These will be what the player shoots.
@@ -112,3 +113,13 @@ class Missile : public moveable_object
 
 #endif // _MISSILE_
 
+#ifndef _BOMB_
+#define _BOMB_
+
+class Bomb : public Missile
+{
+public:
+    Bomb(){
+    }
+};
+#endif // _BOMB_
