@@ -84,7 +84,7 @@ void refreshGameBoard(void) {
      * We also need to erase the line above when we drop down.
      */
     for(int i=0;i<ALIENS.size();i++) {
-        if((ALIENS[i].getX()+OFFSETX+7>=MAXX) || (OFFSETX <= 0)) {
+        if((ALIENS[i].getAlive()) && ((ALIENS[i].getX()+OFFSETX+7>=MAXX) || (OFFSETX <= 0))) {
             OFFSETY++;
             DIRECTION *= -1;
             mvwaddstr(CANVAS, OFFSETY-1, 0, "                                                                                                   ");
@@ -111,10 +111,12 @@ void refreshGameBoard(void) {
     for(int i=0; i<MISSILE.size(); i++) {
         
         // Check Collision
-        for(int j=0; ALIENS.size(); j++)
-            if(MISSILE[i].getX() >= ALIENS[j].getX() && MISSILE[i].getX() <= ALIENS[j].getX()+7) {
+        for(int j=0; j<=ALIENS.size(); j++)
+            if(MISSILE[i].getX() >= ALIENS[j].getX()+OFFSETX && MISSILE[i].getX() <= ALIENS[j].getX()+OFFSETX+7) {
                 ALIENS[j].setAlive(false);
                 mvwaddstr(CANVAS, MISSILE[i].getY(), MISSILE[i].getX(), " ");
+                erase();
+                break;
             }
         
         mvwaddstr(CANVAS, MISSILE[i].getY(), MISSILE[i].getX(), MISSILE[i].getImage().c_str());
