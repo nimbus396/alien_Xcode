@@ -125,7 +125,7 @@ class Missile : public moveable_object
 #ifndef _BOMB_
 #define _BOMB_
 
-class Bomb : public Missile
+class Bomb : public moveable_object
 {
 public:
     Bomb(){
