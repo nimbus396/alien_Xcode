@@ -6,7 +6,7 @@ using namespace std;
 
 /*
  * We set these variables at the global scope.
- * These will be used through out the entire program
+ * These will be used throughout the entire program
  */
 
 vector<Alien> ALIENS(50, Alien()); // Aliens
@@ -66,15 +66,18 @@ void loadAliens() {
         ALIENS[i].setX(x); // Set x position of alien on the gameboard
         ALIENS[i].setY(y); // Set y position of alien on the gameboard
         ALIENS[i].setImage(alien[y]); // Set the image according to the row
-        ALIENS[i].setAlive(true);
+        ALIENS[i].setAlive(true); // Set the alien to show
         
-        // Each alien is 7 characters but we really want them a little farther spaced
-        x+=9;
+        /*
+         * Each alien is 7 characters but we really want them a little farther spaced
+         * to allow some space for the player to miss.
+         */
+         x+=9;
     }
 }
 
 /*
- * Routine to make the aliens move
+ * Routine to make the everything move and check collisions
  */
 void refreshGameBoard(void) {
     
@@ -82,6 +85,9 @@ void refreshGameBoard(void) {
      * First check the position of the Aliens.  When they hit the
      * screen border, they should drop one level and change direction
      * We also need to erase the line above when we drop down.
+     *
+     * If any alien hits the border, immediatly drop down and stop checking
+     * collisions.
      */
     for(int i=0;i<ALIENS.size();i++) {
         if((ALIENS[i].getAlive()) && ((ALIENS[i].getX()+OFFSETX+7>=MAXX) || (OFFSETX <= 0))) {
@@ -105,6 +111,7 @@ void refreshGameBoard(void) {
         }
     }
     
+    // Draw the "base" so the player has a shooter at the bottom of the screen
     mvwaddstr(CANVAS, MAXY-1, BASEX, BASE.getImage().c_str());
     
     // Fire the Missle
@@ -128,7 +135,7 @@ void refreshGameBoard(void) {
         
     }
     
-    // Debug information
+    // Debug information - If the player presses 'd' or 'D', show debug info
     if(DEBUGME==1) {
         if(MISSILE.size() > 0) {
             mvwprintw(CANVAS, 19, 0, "%d, %d - Missile Image: %s",MISSILE[0].getX(), MISSILE[0].getY(), MISSILE[0].getImage().c_str());
@@ -147,7 +154,10 @@ void refreshGameBoard(void) {
     
     // Call to refresh the canvas
     wrefresh(CANVAS);
-    // dumb timer
+    /* dumb timer - This really needs to be a thread so we can separate
+     * The speed of the aliens from the speed of the missiles and shooter.
+     * This will be implemented later.  For now, just create a dumb timer.
+     */
     for(int i=0; i<SPEED; i++) { int d=0; };
 }
 
@@ -156,17 +166,21 @@ void refreshGameBoard(void) {
  */
 void play(void) {
     
-    // What key was pressed
+    // What key did the player press?
     int keyPress;
     
-    // Setup the terminal
-    initscr();
-    cbreak();
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
-    curs_set(0);
-    noecho();
-    refresh();
+    /*
+     * This isn't a "graphic" game and simply uses
+     * standard american ascii charaters for the images.
+     * NCurses library is used but, we have some setup to do.
+     */
+    initscr(); // Initialize Curses
+    cbreak(); // Use unbuffered input
+    keypad(stdscr, TRUE); // Allow for use of keypad
+    nodelay(stdscr, TRUE); // Immediately process input so player doesn't press enter
+    curs_set(0); // Turn the cursor off.
+    noecho(); // Don't echo keys to the screen
+    refresh(); // Apply our setup
     
     // Create the gameboard
     CANVAS = newwin(24, 100, 0, 0);
