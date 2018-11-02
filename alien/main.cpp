@@ -1,7 +1,7 @@
 #include "gameboard.h"
 #include <iostream>
 #include <vector>
-#include <curses.h>
+#include <ncurses.h>
 using namespace std;
 
 /*
@@ -129,7 +129,7 @@ void refreshGameBoard(void) {
     }
     
     // Debug information
-    if(DEBUG==1) {
+    if(DEBUGME==1) {
         if(MISSILE.size() > 0) {
             mvwprintw(CANVAS, 19, 0, "%d, %d - Missile Image: %s",MISSILE[0].getX(), MISSILE[0].getY(), MISSILE[0].getImage().c_str());
             mvwprintw(CANVAS, 20, 0, "Missile Count: %d", MISSILE.size());

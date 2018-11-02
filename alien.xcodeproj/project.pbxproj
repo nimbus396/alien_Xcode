@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1B679D7218BC04B004672B5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B679D6218BC04B004672B5 /* main.cpp */; };
-		A1B679E2218BC555004672B5 /* libcurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B679E1218BC555004672B5 /* libcurses.tbd */; };
+		A1B679E4218BCED1004672B5 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B679E3218BCED1004672B5 /* libncurses.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +28,7 @@
 		A1B679D6218BC04B004672B5 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A1B679DD218BC119004672B5 /* gameboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gameboard.h; sourceTree = "<group>"; };
 		A1B679E1218BC555004672B5 /* libcurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurses.tbd; path = usr/lib/libcurses.tbd; sourceTree = SDKROOT; };
+		A1B679E3218BCED1004672B5 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,7 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1B679E2218BC555004672B5 /* libcurses.tbd in Frameworks */,
+				A1B679E4218BCED1004672B5 /* libncurses.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +72,7 @@
 		A1B679E0218BC555004672B5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1B679E3218BCED1004672B5 /* libncurses.tbd */,
 				A1B679E1218BC555004672B5 /* libcurses.tbd */,
 			);
 			name = Frameworks;
@@ -252,7 +254,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEBUGME = 1;
 				"OTHER_LDFLAGS[arch=*]" = "-Lcurses";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -262,7 +263,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEBUGME = 1;
 				"OTHER_LDFLAGS[arch=*]" = "-Lcurses";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
