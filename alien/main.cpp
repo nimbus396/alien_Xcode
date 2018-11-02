@@ -16,7 +16,8 @@ WINDOW *CANVAS; // Gameboard
 int MAXX, MAXY, DIRECTION, OFFSETX, OFFSETY; // Alien positions
 int BASEX; // Shooter position
 int DEBUGME; // Debug information
-int SPEED; // Speed of the game
+const int SPEED = 25000000; // Speed of the game
+const int MISSILE_LIMIT=3; // Set missile limit
 
 /*
  * Create the canvas
@@ -190,10 +191,15 @@ void play(void) {
     OFFSETX=1;
     OFFSETY=1;
     DIRECTION=1;
-    SPEED=25000000;
+
+    
     // Setup the intial position of the shooter
     BASEX = (MAXX/2) - (BASE.getWidth()/2);
     
+    /*
+     * A single missile was created to initialize the vector
+     * so, we need to erase the vector so it has zero elements
+     */
     MISSILE.clear();
     
     // Play the game
@@ -207,15 +213,22 @@ void play(void) {
         // Do the function associate with the key
         if(keyPress == 'q' || keyPress == 'Q') break;
         
+        // Enable/Disable Debug information
         if(keyPress == 'd' || keyPress == 'D') {
             DEBUGME=(DEBUGME==1?DEBUGME=0:DEBUGME=1);
             erase();
         }
         
-        if(keyPress == ',') BASEX--;
-        if(keyPress == '.') BASEX++;
-        if(keyPress == ' ') {
-            if(MISSILE.size() < 3) {
+        // Process player movements and firing of missiles
+        if(keyPress == ',' || keyPress == KEY_LEFT) BASEX--;
+        if(keyPress == '.' || keyPress == KEY_RIGHT) BASEX++;
+        if(keyPress == ' ' || keyPress == 'f' || keyPress == 'F') {
+            /*
+             * In the original game, you couldn't shoot more than
+             * tree missiles.  We will check the missile vector
+             * for the number of elements.
+             */
+            if(MISSILE.size() < MISSILE_LIMIT) {
                 MISSILE.push_back(Missile(BASEX, MAXY-3));
             }
         }
@@ -226,6 +239,7 @@ void play(void) {
     endwin();
 }
 
+// There is no magic here but, this is where it all starts
 int main() {
     
     // Setup the game
