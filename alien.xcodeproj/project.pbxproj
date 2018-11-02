@@ -63,8 +63,8 @@
 		A1B679D5218BC04B004672B5 /* alien */ = {
 			isa = PBXGroup;
 			children = (
-				A1B679D6218BC04B004672B5 /* main.cpp */,
 				A1B679DD218BC119004672B5 /* gameboard.h */,
+				A1B679D6218BC04B004672B5 /* main.cpp */,
 			);
 			path = alien;
 			sourceTree = "<group>";
