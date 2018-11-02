@@ -113,6 +113,15 @@ class Missile : public moveable_object
 
 #endif // _MISSILE_
 
+/*
+ * Bombs are pretty much missiles but these are dropped
+ * from the aliens.  We could have just used a missile class
+ * but for sake of limiting confusion, let's just have a class
+ * called Bomb.  Since these are missiles in disguise, these
+ * have the same properties and methods as a missile.  In
+ * essence, we are just having a missile with a different name.
+ */
+
 #ifndef _BOMB_
 #define _BOMB_
 
@@ -120,6 +129,12 @@ class Bomb : public Missile
 {
 public:
     Bomb(){
+    }
+    
+    Bomb(int x, int y) {
+        setX(x+4);
+        setY(y);
+        setImage("|");
     }
 };
 #endif // _BOMB_
