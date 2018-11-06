@@ -19,11 +19,9 @@ int BASEX; // Shooter position
 int DEBUGME; // Debug information
 const int ALIENSPEED = 100; // Speed of the game
 bool ALIENTIMER=true; // Timer for the alien movement
-const int MISSILESPEED = 1000; // Speed for Missile
+const int MISSILESPEED = 85; // Speed for Missile
 bool MISSILETIMER=true; // Timer for Missile movement
 const int MISSILE_LIMIT=3; // Set missile limit
-
-
 typedef std::chrono::high_resolution_clock CLOCK;
 auto alienTimerStart = CLOCK::now();
 auto missileTimerStart = CLOCK::now();
@@ -38,6 +36,24 @@ WINDOW *create_newwin(int height, int width, int startX, int startY) {
     local_win = newwin(height, width, startY, startX);
     wrefresh(local_win);
     return local_win;
+}
+
+/*
+ * Debug information
+ */
+void debugMe(void) {
+    if(MISSILE.size() > 0) {
+        mvwprintw(CANVAS, 18, 0, "%d, %d - Missile Image: %s",MISSILE[0].getX(), MISSILE[0].getY(), MISSILE[0].getImage().c_str());
+        mvwprintw(CANVAS, 19, 0, "Missile Count: %d", MISSILE.size());
+    }
+    
+    mvwprintw(CANVAS, 21, 0, "Base X: %d, Image: %s", BASEX, BASE.getImage().c_str());
+    mvwprintw(CANVAS, 22, 0, "Max X: %d Max Y %d", MAXX, MAXY);
+    mvwprintw(CANVAS, 23, 0, "Offset X: %d Offset Y %d", OFFSETX, OFFSETY);
+    mvwprintw(CANVAS, 0, 0, "+");
+    mvwprintw(CANVAS, 23, 0, "+");
+    mvwprintw(CANVAS, 0, 99, "+");
+    mvwprintw(CANVAS, 23, 99, "+");
 }
 
 /* Load the vector of aliens
@@ -82,7 +98,7 @@ void loadAliens() {
          * Each alien is 7 characters but we really want them a little farther spaced
          * to allow some space for the player to miss.
          */
-         x+=9;
+        x+=9;
     }
 }
 
@@ -113,7 +129,7 @@ void setupGame(void) {
  * Routine to make the everything move and check collisions
  */
 void refreshGameBoard(void) {
-
+    
     /*
      * Each time we call a refresh, we will check the timers
      */
@@ -131,7 +147,7 @@ void refreshGameBoard(void) {
     // Missile timer duration
     auto missileTimerStop = CLOCK::now();
     long missileDelay = std::chrono::duration_cast<std::chrono::milliseconds>(missileTimerStop - missileTimerStart).count();
-
+    
     // If we just hit the timer cycle, reset the timer
     if(MISSILETIMER) {
         MISSILETIMER=false;
@@ -142,12 +158,12 @@ void refreshGameBoard(void) {
     if (missileDelay >= MISSILESPEED) {
         MISSILETIMER=true;
     }
-
+    
     // Set when we hit the right duration
-    if (alienDelay >=ALIENSPEED) {
+    if (alienDelay >= ALIENSPEED) {
         ALIENTIMER=true;
     }
-
+    
     /*
      * First check the position of the Aliens.  When they hit the
      * screen border, they should drop one level and change direction
@@ -156,15 +172,16 @@ void refreshGameBoard(void) {
      * If any alien hits the border, immediatly drop down and stop checking
      * collisions.
      */
-    for(int i=0;i<ALIENS.size();i++) {
-        if(ALIENTIMER && ALIENS[i].getAlive() && (((ALIENS[i].getX()+OFFSETX+9)>=MAXX) || (OFFSETX <= 0))) {
-            OFFSETY++;
-            DIRECTION *= -1;
-            mvwaddstr(CANVAS, OFFSETY-1, 0, "                                                                                                   ");
-            break;
+    if(ALIENTIMER) {
+        for(int i=0;i<ALIENS.size();i++) {
+            if(ALIENS[i].getAlive() && (((ALIENS[i].getX()+OFFSETX+9)>=MAXX) || (ALIENS[i].getX()+OFFSETX <= 0))) {
+                OFFSETY++;
+                DIRECTION *= -1;
+                mvwaddstr(CANVAS, OFFSETY-1, 0, "                                                                                                                                       ");
+                break;
+            }
         }
     }
-    
     // Sets the direction -- (Left) ++ (Right)
     if (ALIENTIMER) {
         if (DIRECTION == 1)
@@ -172,60 +189,51 @@ void refreshGameBoard(void) {
         else
             OFFSETX--;
     }
-
+    
     // Draw the aliens on the canvas using the offsets for X and Y
     for(int i=0; i<ALIENS.size(); i++) {
         if(ALIENS[i].getAlive()) {
             mvwaddstr(CANVAS, ALIENS[i].getY()+OFFSETY, ALIENS[i].getX()+OFFSETX, ALIENS[i].getImage().c_str());
         }
     }
-
+    
     // Fire the Missle
-    for(int i=0; i<MISSILE.size(); i++) {
-        
-        // Check Collision
-        for(int j=0; j<=ALIENS.size(); j++) {
-            if((MISSILE[i].getX() >= ALIENS[j].getX()+OFFSETX && MISSILE[i].getX() <= ALIENS[j].getX()+OFFSETX+7) && (MISSILE[i].getY() == (ALIENS[j].getY()+OFFSETY))) {
-                ALIENS[j].setAlive(false);
-                mvwaddstr(CANVAS, MISSILE[i].getY(), MISSILE[i].getX(), " ");
-                erase();
+    if(MISSILETIMER) {
+        bool isHit=false;
+        for(int i=0; i<MISSILE.size(); i++) {
+            // Check Collision
+            for(int j=0; j<=ALIENS.size(); j++) {
+                if((MISSILE[i].getX() >= ALIENS[j].getX()+OFFSETX && MISSILE[i].getX() <= ALIENS[j].getX()+OFFSETX+7) && (MISSILE[i].getY() == (ALIENS[j].getY()+OFFSETY)) && ALIENS[j].getAlive()) {
+                    ALIENS[j].setAlive(false);
+                    mvwaddstr(CANVAS, MISSILE[i].getY()-1, MISSILE[i].getX(), " ");
+                    mvwaddstr(CANVAS, ALIENS[j].getY()+OFFSETY, ALIENS[j].getX()+OFFSETX, "       ");
+                    isHit=true;
+                    break;
+                }
+            }
+            if(isHit) {
+                MISSILE.erase(MISSILE.begin()+i);
                 break;
             }
+            mvwaddstr(CANVAS, MISSILE[i].getY(), MISSILE[i].getX(), MISSILE[i].getImage().c_str());
+            mvwaddstr(CANVAS, MISSILE[i].getY()+1, MISSILE[i].getX(), " ");
+            if(MISSILE[i].getY()-1<=1)
+                MISSILE.erase(MISSILE.begin()+i);
+            else
+                MISSILE[i].setY(MISSILE[i].getY()-1);
+            
         }
-        
-        mvwaddstr(CANVAS, MISSILE[i].getY(), MISSILE[i].getX(), MISSILE[i].getImage().c_str());
-        mvwaddstr(CANVAS, MISSILE[i].getY()+1, MISSILE[i].getX(), " ");
-        if(MISSILE[i].getY()-1<=1)
-            MISSILE.erase(MISSILE.begin()+i);
-        else
-            MISSILE[i].setY(MISSILE[i].getY()-1);
-        
     }
+    // Draw the "base" so the player has a shooter at the bottom of the screen
+    mvwaddstr(CANVAS, MAXY-1, BASEX, BASE.getImage().c_str());
     
     // Debug information - If the player presses 'd' or 'D', show debug info
     if(DEBUGME==1) {
-        if(MISSILE.size() > 0) {
-            mvwprintw(CANVAS, 18, 0, "%d, %d - Missile Image: %s",MISSILE[0].getX(), MISSILE[0].getY(), MISSILE[0].getImage().c_str());
-            mvwprintw(CANVAS, 19, 0, "Missile Count: %d", MISSILE.size());
-        }
-
-        mvwprintw(CANVAS, 20, 0, "Delay: %2d, T/F: %2d", alienDelay, ALIENTIMER?1:0);
-        mvwprintw(CANVAS, 21, 0, "Base X: %d, Image: %s", BASEX, BASE.getImage().c_str());
-        mvwprintw(CANVAS, 22, 0, "Max X: %d Max Y %d", MAXX, MAXY);
-        mvwprintw(CANVAS, 23, 0, "Offset X: %d Offset Y %d", OFFSETX, OFFSETY);
-        mvwprintw(CANVAS, 0, 0, "+");
-        mvwprintw(CANVAS, 23, 0, "+");
-        mvwprintw(CANVAS, 0, 99, "+");
-        mvwprintw(CANVAS, 23, 99, "+");
-        
+        debugMe();
     }
     
     // Call to refresh the canvas
     wrefresh(CANVAS);
-    /* dumb timer - This really needs to be a thread so we can separate
-     * The speed of the aliens from the speed of the missiles and shooter.
-     * This will be implemented later.  For now, just create a dumb timer.
-     */
 }
 
 /*
@@ -279,9 +287,6 @@ void play(void) {
                 MISSILE.push_back(Missile(BASEX, MAXY-3));
             }
         }
-        // Draw the "base" so the player has a shooter at the bottom of the screen
-        mvwaddstr(CANVAS, MAXY-1, BASEX, BASE.getImage().c_str());
-        //wrefresh(CANVAS);
     }
     
     // Teardown the game and return the screen to normal
@@ -295,6 +300,7 @@ int main() {
     // Setup the game
     loadAliens();
     setupGame();
+    
     // and play it
     play();
 }
