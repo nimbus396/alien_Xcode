@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <ncurses.h>
-#include <future>
+#include <chrono>
 using namespace std;
 
 /*
@@ -17,9 +17,13 @@ WINDOW *CANVAS; // Gameboard
 int MAXX, MAXY, DIRECTION, OFFSETX, OFFSETY; // Alien positions
 int BASEX; // Shooter position
 int DEBUGME; // Debug information
-const int SPEED = 25000000; // Speed of the game
+const int SPEED = 100; // Speed of the game
 const int MISSILE_LIMIT=3; // Set missile limit
-bool RUNNING=true;
+bool ALIENTIMER=true;
+
+typedef std::chrono::high_resolution_clock CLOCK;
+auto alienTimerStart = CLOCK::now();
+
 
 /*
  * Create the canvas
@@ -79,10 +83,7 @@ void loadAliens() {
     }
 }
 
-/*
- * Routine to make the everything move and check collisions
- */
-void refreshGameBoard(void) {
+void setupGame(void) {
     /*
      * This isn't a "graphic" game and simply uses
      * standard american ascii charaters for the images.
@@ -104,8 +105,13 @@ void refreshGameBoard(void) {
     OFFSETX=1;
     OFFSETY=1;
     DIRECTION=1;
+}
+/*
+ * Routine to make the everything move and check collisions
+ */
+void refreshGameBoard(void) {
+    
 
-    while(RUNNING) {
     /*
      * First check the position of the Aliens.  When they hit the
      * screen border, they should drop one level and change direction
@@ -124,20 +130,19 @@ void refreshGameBoard(void) {
     }
     
     // Sets the direction -- (Left) ++ (Right)
-    if(DIRECTION == 1)
-        OFFSETX++;
-    else
-        OFFSETX--;
-    
+    if (ALIENTIMER) {
+        if (DIRECTION == 1)
+            OFFSETX++;
+        else
+            OFFSETX--;
+    }
     // Draw the aliens on the canvas using the offsets for X and Y
     for(int i=0; i<ALIENS.size(); i++) {
         if(ALIENS[i].getAlive()) {
             mvwaddstr(CANVAS, ALIENS[i].getY()+OFFSETY, ALIENS[i].getX()+OFFSETX, ALIENS[i].getImage().c_str());
         }
     }
-    
-    
-    
+
     // Fire the Missle
     for(int i=0; i<MISSILE.size(); i++) {
         
@@ -158,14 +163,16 @@ void refreshGameBoard(void) {
             MISSILE[i].setY(MISSILE[i].getY()-1);
         
     }
-    
+        auto alienTimerStop = CLOCK::now();
     // Debug information - If the player presses 'd' or 'D', show debug info
     if(DEBUGME==1) {
         if(MISSILE.size() > 0) {
             mvwprintw(CANVAS, 19, 0, "%d, %d - Missile Image: %s",MISSILE[0].getX(), MISSILE[0].getY(), MISSILE[0].getImage().c_str());
             mvwprintw(CANVAS, 20, 0, "Missile Count: %d", MISSILE.size());
         }
-        
+
+        mvwprintw(CANVAS, 20, 0, "Delay: %2d, T/F: %2d", std::chrono::duration_cast<std::chrono::milliseconds>(alienTimerStop - alienTimerStart).count(),
+                  ALIENTIMER?1:0);
         mvwprintw(CANVAS, 21, 0, "Base X: %d, Image: %s", BASEX, BASE.getImage().c_str());
         mvwprintw(CANVAS, 22, 0, "Max X: %d Max Y %d", MAXX, MAXY);
         mvwprintw(CANVAS, 23, 0, "Offset X: %d Offset Y %d", OFFSETX, OFFSETY);
@@ -182,9 +189,16 @@ void refreshGameBoard(void) {
      * The speed of the aliens from the speed of the missiles and shooter.
      * This will be implemented later.  For now, just create a dumb timer.
      */
-    for(int i=0; i<SPEED; i++) { int d=0; };
+    if(ALIENTIMER) {
+        ALIENTIMER=false;
+        alienTimerStart = CLOCK::now();
     }
+    
+    //for(int i=0; i<SPEED; i++) { int d=0; };
+    if ((double)std::chrono::duration_cast<std::chrono::milliseconds>(alienTimerStop - alienTimerStart).count() >=SPEED) {
+        ALIENTIMER=true;
     }
+}
 
 /*
  * Setup the canvas and play the game
@@ -205,19 +219,16 @@ void play(void) {
      */
     MISSILE.clear();
     
-    std::future<void>result(async(refreshGameBoard));
-    
     // Play the game
     while (true) {
         
-        //refreshGameBoard();
+        refreshGameBoard();
         
         // Check for a keypress
         keyPress=getch();
         
         // Do the function associate with the key
         if(keyPress == 'q' || keyPress == 'Q') {
-            RUNNING=false;
             break;
         }
         
@@ -242,7 +253,7 @@ void play(void) {
         }
         // Draw the "base" so the player has a shooter at the bottom of the screen
         mvwaddstr(CANVAS, MAXY-1, BASEX, BASE.getImage().c_str());
-        wrefresh(CANVAS);
+        //wrefresh(CANVAS);
     }
     
     // Teardown the game and return the screen to normal
@@ -255,7 +266,7 @@ int main() {
     
     // Setup the game
     loadAliens();
-    
+    setupGame();
     // and play it
     play();
 }
