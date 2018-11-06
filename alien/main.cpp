@@ -19,7 +19,7 @@ int BASEX; // Shooter position
 int DEBUGME; // Debug information
 const int ALIENSPEED = 100; // Speed of the game
 bool ALIENTIMER=true; // Timer for the alien movement
-const int MISSILESPEED = 150; // Speed for Missile
+const int MISSILESPEED = 500; // Speed for Missile
 bool MISSILETIMER=true; // Timer for Missile movement
 const int MISSILE_LIMIT=3; // Set missile limit
 
@@ -101,7 +101,7 @@ void setupGame(void) {
     refresh(); // Apply our setup
     
     // Create the gameboard
-    CANVAS = newwin(24, 100, 0, 0);
+    CANVAS = newwin(30, 150, 0, 0);
     
     // Setup the initial direction and speed of the aliens and the screen borders
     getmaxyx(CANVAS, MAXY, MAXX);
