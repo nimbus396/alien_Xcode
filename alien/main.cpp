@@ -17,13 +17,16 @@ WINDOW *CANVAS; // Gameboard
 int MAXX, MAXY, DIRECTION, OFFSETX, OFFSETY; // Alien positions
 int BASEX; // Shooter position
 int DEBUGME; // Debug information
-const int SPEED = 100; // Speed of the game
+const int ALIENSPEED = 100; // Speed of the game
+bool ALIENTIMER=true; // Timer for the alien movement
+const int MISSILESPEED = 150; // Speed for Missile
+bool MISSILETIMER=true; // Timer for Missile movement
 const int MISSILE_LIMIT=3; // Set missile limit
-bool ALIENTIMER=true;
+
 
 typedef std::chrono::high_resolution_clock CLOCK;
 auto alienTimerStart = CLOCK::now();
-
+auto missileTimerStart = CLOCK::now();
 
 /*
  * Create the canvas
@@ -121,7 +124,7 @@ void refreshGameBoard(void) {
      * collisions.
      */
     for(int i=0;i<ALIENS.size();i++) {
-        if((ALIENS[i].getAlive()) && ((ALIENS[i].getX()+OFFSETX+7>=MAXX) || (OFFSETX <= 0))) {
+        if(ALIENTIMER && (ALIENS[i].getAlive()) && (((ALIENS[i].getX()+OFFSETX+9)>=MAXX) || (OFFSETX <= 0))) {
             OFFSETY++;
             DIRECTION *= -1;
             mvwaddstr(CANVAS, OFFSETY-1, 0, "                                                                                                   ");
@@ -164,6 +167,7 @@ void refreshGameBoard(void) {
         
     }
         auto alienTimerStop = CLOCK::now();
+    auto missileTimerStop = CLOCK::now();
     // Debug information - If the player presses 'd' or 'D', show debug info
     if(DEBUGME==1) {
         if(MISSILE.size() > 0) {
@@ -194,9 +198,17 @@ void refreshGameBoard(void) {
         alienTimerStart = CLOCK::now();
     }
     
-    //for(int i=0; i<SPEED; i++) { int d=0; };
-    if ((double)std::chrono::duration_cast<std::chrono::milliseconds>(alienTimerStop - alienTimerStart).count() >=SPEED) {
+    if(MISSILETIMER) {
+        MISSILETIMER=false;
+        missileTimerStart = CLOCK::now();
+    }
+    
+    if ((double)std::chrono::duration_cast<std::chrono::milliseconds>(alienTimerStop - alienTimerStart).count() >=ALIENSPEED) {
         ALIENTIMER=true;
+    }
+    
+    if ((double)std::chrono::duration_cast<std::chrono::milliseconds>(missileTimerStop - missileTimerStart).count() >= MISSILESPEED) {
+        MISSILETIMER=true;
     }
 }
 
