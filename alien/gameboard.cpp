@@ -129,6 +129,16 @@ void setupGame(void) {
     OFFSETX=1;
     OFFSETY=1;
     DIRECTION=1;
+    
+    // Setup the intial position of the shooter
+    BASEX = (MAXX/2) - (BASE.getWidth()/2);
+    
+    /*
+     * A single missile was created to initialize the vector
+     * so, we need to erase the vector so it has zero elements
+     */
+    MISSILE.clear();
+    
 }
 /*
  * Routine to make the everything move and check collisions
@@ -248,18 +258,7 @@ void play(void) {
     
     // What key did the player press?
     int keyPress;
-    
-    
-    
-    // Setup the intial position of the shooter
-    BASEX = (MAXX/2) - (BASE.getWidth()/2);
-    
-    /*
-     * A single missile was created to initialize the vector
-     * so, we need to erase the vector so it has zero elements
-     */
-    MISSILE.clear();
-    
+
     // Play the game
     while (true) {
         
