@@ -1,9 +1,9 @@
-/*
- * Parent class for all moving objects
- */
 #include <string>
 using namespace std;
 
+/*
+ * Parent class for all moving objects
+ */
 #ifndef _MOVEABLE_OBJECT_
 #define _MOVEABLE_OBJECT_ 
 

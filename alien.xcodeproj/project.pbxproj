@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1B679D7218BC04B004672B5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B679D6218BC04B004672B5 /* main.cpp */; };
+		A189EFEC21928565001CFF01 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A189EFEB21928565001CFF01 /* main.cpp */; };
+		A1B679D7218BC04B004672B5 /* gameboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B679D6218BC04B004672B5 /* gameboard.cpp */; };
 		A1B679E4218BCED1004672B5 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B679E3218BCED1004672B5 /* libncurses.tbd */; };
 /* End PBXBuildFile section */
 
@@ -24,8 +25,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A189EFEB21928565001CFF01 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A1B679D3218BC04B004672B5 /* alien */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = alien; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1B679D6218BC04B004672B5 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A1B679D6218BC04B004672B5 /* gameboard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gameboard.cpp; sourceTree = "<group>"; };
 		A1B679DD218BC119004672B5 /* gameboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gameboard.h; sourceTree = "<group>"; };
 		A1B679E1218BC555004672B5 /* libcurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurses.tbd; path = usr/lib/libcurses.tbd; sourceTree = SDKROOT; };
 		A1B679E3218BCED1004672B5 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
@@ -64,7 +66,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B679DD218BC119004672B5 /* gameboard.h */,
-				A1B679D6218BC04B004672B5 /* main.cpp */,
+				A1B679D6218BC04B004672B5 /* gameboard.cpp */,
+				A189EFEB21928565001CFF01 /* main.cpp */,
 			);
 			path = alien;
 			sourceTree = "<group>";
@@ -134,7 +137,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1B679D7218BC04B004672B5 /* main.cpp in Sources */,
+				A189EFEC21928565001CFF01 /* main.cpp in Sources */,
+				A1B679D7218BC04B004672B5 /* gameboard.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
