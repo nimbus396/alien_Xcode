@@ -16,13 +16,13 @@ WINDOW *CANVAS; // Gameboard
 // Variables for Aliens
 vector<Alien> ALIENS(50, Alien()); // Aliens
 int MAXX, MAXY, DIRECTION, OFFSETX, OFFSETY; // Alien positions
-const int ALIENSPEED = 100; // Speed of the game
+const int ALIENSPEED = 100; // Speed of the aliens in milliseconds
 bool ALIENTIMER=true; // Timer for the alien movement
 auto alienTimerStart = CLOCK::now(); // Setup timer
 
 // Variables for Missiles
 vector<Missile> MISSILE(1, Missile()); // Missiles
-const int MISSILESPEED = 85; // Speed for Missile
+const int MISSILESPEED = 85; // Speed of missiles in milliseconds
 bool MISSILETIMER=true; // Timer for Missile movement
 const int MISSILE_LIMIT=3; // Set missile limit
 auto missileTimerStart = CLOCK::now(); // Setup timer
@@ -140,6 +140,7 @@ void setupGame(void) {
     MISSILE.clear();
     
 }
+
 /*
  * Routine to make the everything move and check collisions
  */

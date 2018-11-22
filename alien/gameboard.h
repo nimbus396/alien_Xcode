@@ -30,7 +30,7 @@ class moveable_object
      * Information about the image
      */
 
-    int getWidth(void) { return image.length(); };
+    int getWidth(void) { return (int)image.length(); };
     int getHeight(void) { return 1; };
 
     /*
