@@ -230,13 +230,13 @@ void refreshGameBoard(void) {
                 MISSILE.erase(MISSILE.begin()+i);
                 break;
             }
-            mvwaddstr(CANVAS, MISSILE[i].getY(), MISSILE[i].getX(), MISSILE[i].getImage().c_str());
-            mvwaddstr(CANVAS, MISSILE[i].getY()+1, MISSILE[i].getX(), " ");
+            
             if(MISSILE[i].getY()-1<=1)
                 MISSILE.erase(MISSILE.begin()+i);
             else
                 MISSILE[i].setY(MISSILE[i].getY()-1);
-            
+            mvwaddstr(CANVAS, MISSILE[i].getY(), MISSILE[i].getX(), MISSILE[i].getImage().c_str());
+            mvwaddstr(CANVAS, MISSILE[i].getY()+1, MISSILE[i].getX(), " ");
         }
     }
     // Draw the "base" so the player has a shooter at the bottom of the screen
